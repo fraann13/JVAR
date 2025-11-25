@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node start-local.js",
     "prebuild": "node replace-env.js",
     "build": "ng build --configuration production",
     "postbuild": "node replace-env.js",
@@ -43,6 +43,7 @@
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
     "@types/parse": "^3.0.9",
+    "dotenv": "^17.2.3",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
