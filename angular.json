@@ -42,12 +42,7 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all",
-              "define": {
-                "process.env.NG_APP_PARSE_APP_ID": "\"\"",
-                "process.env.NG_APP_PARSE_JS_KEY": "\"\"",
-                "process.env.NG_APP_PARSE_URL": "\"\""
-              }
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,

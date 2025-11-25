@@ -1,6 +1,15 @@
+interface GlobalEnv {
+    PARSE_APP_ID: string;
+    PARSE_JS_KEY: string;
+    PARSE_SERVER_URL: string;
+}
+
+const runtimeEnv = (window as any).env || {};
+
 export const environment = {
     production: true,
-    parseAppId: (process.env as any).NG_APP_PARSE_APP_ID,
-    parseJsKey: (process.env as any).NG_APP_PARSE_JS_KEY,
-    parseServerUrl: (process.env as any).NG_APP_PARSE_URL 
+    
+    parseAppId: runtimeEnv.PARSE_APP_ID,
+    parseJsKey: runtimeEnv.PARSE_JS_KEY,
+    parseServerUrl: runtimeEnv.PARSE_SERVER_URL,
 };
