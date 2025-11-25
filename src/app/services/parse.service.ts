@@ -7,11 +7,7 @@ import { environment } from '../../environments/environment';
 })
 export class ParseService {
     constructor() {
-        const appId = environment.parseAppId;
-        const jsKey = environment.parseJsKey;
-        const serverUrl = environment.parseServerUrl;
-
-        Parse.initialize(appId, jsKey);
-        (Parse as any).serverURL = serverUrl;
+        Parse.initialize(environment.parseAppId, environment.parseJsKey);
+        (Parse as any).serverURL = environment.parseServerUrl;
     }
 }
