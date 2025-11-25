@@ -1,8 +1,13 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+# --- Variables de Entorno y Scripts Locales ---
+.env.local               # <-- Archivo de claves locales
+start-local.js           # <-- Script para generar env.js localmente
+/public/env.js           # <-- Archivo generado que contiene las claves (CRÍTICO)
+
 # Angular environments
-# src/environments/environment.ts
-# src/environments/environment.prod.ts
+src/environments/environment.ts
+src/environments/environment.prod.ts
 
 # Compiled output
 /dist
