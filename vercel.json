@@ -1,4 +1,4 @@
 {
-    "buildCommand": "ng build --configuration production",
+    "buildCommand": "ng build --configuration production && node replace-env.js",
     "outputDirectory": "dist/container-calc/browser"
 }

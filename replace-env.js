@@ -1,6 +1,5 @@
 const replace = require('replace-in-file');
 
-// Nombres de las variables de entorno de Vercel (NG_APP_)
 const envVars = [
     'NG_APP_PARSE_APP_ID',
     'NG_APP_PARSE_JS_KEY',
@@ -9,7 +8,7 @@ const envVars = [
 
 // Creamos los patrones de búsqueda y reemplazo
 const options = {
-    files: 'dist/**/*.js', // Busca en todos los archivos JS compilados en dist
+    files: 'dist/**/main-*.js',
     from: envVars.map(name => new RegExp(`process\\.env\\.${name}`, 'g')),
     to: envVars.map(name => `'${process.env[name]}'`)
 };
