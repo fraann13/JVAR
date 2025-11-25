@@ -1,4 +1,4 @@
-const replace = require('replace-in-file');
+const replaceInFile = require('replace-in-file');
 
 const envVars = [
     'NG_APP_PARSE_APP_ID',
@@ -15,9 +15,7 @@ const options = {
 
 try
 {
-    const results = replace.sync(options);
-    // console.log para ver qué fue reemplazado (opcional)
-    // console.log('Environment variables replaced:', results); 
+    const results = replaceInFile.sync(options);
 } catch (error)
 {
     console.error('Error during environment variable replacement:', error);
