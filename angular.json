@@ -44,9 +44,9 @@
               ],
               "outputHashing": "all",
               "define": {
-                "process.env.NG_APP_PARSE_APP_ID": "\"$NG_APP_PARSE_APP_ID\"",
-                "process.env.NG_APP_PARSE_JS_KEY": "\"$NG_APP_PARSE_JS_KEY\"",
-                "process.env.NG_APP_PARSE_URL": "\"$NG_APP_PARSE_URL\""
+                "process.env.NG_APP_PARSE_APP_ID": "\"\"",
+                "process.env.NG_APP_PARSE_JS_KEY": "\"\"",
+                "process.env.NG_APP_PARSE_URL": "\"\""
               }
             },
             "development": {
