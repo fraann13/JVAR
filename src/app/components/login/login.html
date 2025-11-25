@@ -1,0 +1,20 @@
+<div class="container-login">
+    <form class="form" (ngSubmit)="onLogin()">
+        <div class="title">Bienvenido,<br /> <span>inicia sesión para continuar</span></div>
+
+        <input type="text" id="username" placeholder="Username" name="username" [(ngModel)]="username" class="input"
+            required>
+
+        <input type="password" id="password" placeholder="Contraseña" name="password" [(ngModel)]="password"
+            class="input" required>
+
+        <div *ngIf="loginError" class="badges">
+            <p class="error-message">{{ loginError }}</p>
+        </div>
+
+        <button type="submit" [disabled]="isSubmitting" class="button-confirm">
+            <!-- <fa-icon *ngIf="!isSubmitting" [icon]="faSignIn"></fa-icon> -->
+            {{ isSubmitting ? 'Cargando...' : 'Iniciar Sesión' }}
+        </button>
+    </form>
+</div>

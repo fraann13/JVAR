@@ -1,0 +1,252 @@
+<div class="page-wrapper">
+    <header class="app-header">
+        <div class="header-title">
+            <h1>JVAR Cubicaje</h1>
+        </div>
+
+        <span *ngIf="isLoggedIn$ | async" class="user-name">
+            {{ userName }}
+        </span>
+
+        <nav class="header-nav">
+            <button *ngIf="isLoggedIn$ | async" (click)="logout()" class="button-confirm logout-button">
+                <!-- <fa-icon [icon]="faSignOut"></fa-icon> -->
+                Cerrar Sesión
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <app-login *ngIf="(isLoggedIn$ | async) === false"></app-login>
+
+        <div *ngIf="isLoggedIn$ | async" class="app-content">
+            <div class="selection-details-wrapper">
+                <div class="selection-controls">
+                    <label for="contenedor-select">Tipo de contenedor:</label>
+                    <select id="contenedor-select" class="contenedor-select" (change)="onTypeSelect($event)"
+                        [(ngModel)]="selectedType">
+                        <option [ngValue]="null" disabled>--- TIPO DE CONTENEDOR ---</option>
+                        <option [ngValue]="1">20 FT</option>
+                        <option [ngValue]="2">40 FT</option>
+                    </select>
+
+                    <br>
+
+                    <div *ngIf="contenedores$ | async as contenedores">
+                        <label for="contenedor-select-id">Selecciona un contenedor:</label>
+                        <br>
+                        <select id="contenedor-select-id" class="contenedor-select"
+                            (change)="onContenedorSelect($event)" [disabled]="!selectedType"
+                            [(ngModel)]="selectedContenedorId">
+                            <option [ngValue]="null" disabled>--- CONTENEDOR ---</option>
+                            <option *ngFor="let c of contenedores" [ngValue]="c.objectId">
+                                {{ c.name }}
+                            </option>
+                        </select>
+
+                        <p *ngIf="contenedores.length === 0">No hay contenedores disponibles para este tipo.</p>
+                    </div>
+
+                    <div class="loader-div" *ngIf="!(contenedores$ | async)">
+                        <div class="dot-spinner">
+                            <div class="dot-spinner__dot"></div>
+                            <div class="dot-spinner__dot"></div>
+                            <div class="dot-spinner__dot"></div>
+                            <div class="dot-spinner__dot"></div>
+                            <div class="dot-spinner__dot"></div>
+                            <div class="dot-spinner__dot"></div>
+                            <div class="dot-spinner__dot"></div>
+                            <div class="dot-spinner__dot"></div>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <label for="contenedor-select-id">Tipo de pallet:</label>
+                        <br>
+                        <select id="contenedor-select-id" class="contenedor-select"
+                            (change)="onPalletSelect($event)"
+                            [(ngModel)]="selectedPalletId">
+                            <option [ngValue]="null" disabled>--- PALLET ---</option>
+                            <option *ngFor="let c of pallets$ | async" [ngValue]="c.objectId">
+                                {{ c.name }}
+                            </option>
+                        </select>
+
+                        <p *ngIf="(pallets$ | async)?.length === 0">No hay pallets disponibles.</p>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <label for="contenedor-select-id">Tipo de bulto:</label>
+                        <br>
+                        <select id="contenedor-select-id" class="contenedor-select"
+                            (change)="onBultoSelect($event)"
+                            [(ngModel)]="selectedBultoId">
+                            <option [ngValue]="null" disabled>--- BULTO ---</option>
+                            <option *ngFor="let c of bultos$ | async" [ngValue]="c.objectId">
+                                {{ c.name }}
+                            </option>
+                        </select>
+
+                        <p *ngIf="(bultos$ | async)?.length === 0">No hay bultos disponibles.</p>
+                    </div>
+                </div>
+
+                <!-- Detalles -->
+                <div class="contenedor-details">
+                    <ng-container *ngIf="selectedContenedor$ | async as selectedContenedor; else emptyDetails">
+                        <h3>Contenedor: {{ selectedContenedor.name }}</h3>
+                        <p><strong>Carga Máxima:</strong> {{ selectedContenedor.maxLoadCapacity | number: '1.0-2' }} kg</p>
+                        <p><strong>Peso Máximo Bruto:</strong> {{ selectedContenedor.maxWeight | number: '1.0-2' }} kg</p>
+                        <hr>
+                        <h4>Dimensiones:</h4>
+                        <div class="dimensions-grid">
+                            <p><strong>Largo:</strong> {{ selectedContenedor.dimensions.large }} m</p>
+                            <p><strong>Ancho:</strong> {{ selectedContenedor.dimensions.width }} m</p>
+                            <p><strong>Alto:</strong> {{ selectedContenedor.dimensions.height }} m</p>
+                        </div>
+                    </ng-container>
+
+                    <ng-template #emptyDetails>
+                        <div class="empty-details-state">
+                            <h3>Detalles</h3>
+                            <p>Seleccione las opciones para ver sus especificaciones.</p>
+                        </div>
+                    </ng-template>
+                </div>
+
+                <div class="contenedor-details">
+                    <ng-container *ngIf="selectedPallet$ | async as selectedPallet; else emptyDetails">
+                        <h3>Pallet: {{ selectedPallet.name }}</h3>
+                        <p><strong>Peso Vacío:</strong> {{ selectedPallet.weight | number: '1.0-2' }} kg</p>
+                        <p><strong>Capacidad Máxima:</strong> {{ selectedPallet.maxLoad | number: '1.0-2' }} kg</p>
+
+                        <hr>
+                        <h4>Dimensiones:</h4>
+                        <div class="dimensions-grid">
+                            <p><strong>Largo:</strong> {{ selectedPallet.dimensions.large }} m</p>
+                            <p><strong>Ancho:</strong> {{ selectedPallet.dimensions.width }} m</p>
+                            <p><strong>Alto:</strong> {{ selectedPallet.dimensions.height }} m</p>
+                        </div>
+                    </ng-container>
+
+                    <ng-template #emptyDetails>
+                        <div class="empty-details-state">
+                            <h3>Detalles</h3>
+                            <p>Seleccione las opciones para ver sus especificaciones.</p>
+                        </div>
+                    </ng-template>
+                </div>
+
+                <div class="contenedor-details">
+                    <ng-container *ngIf="selectedBulto$ | async as selectedBulto; else emptyDetails">
+                        <h3>Bulto: {{ selectedBulto.name }}</h3>
+                        <p><strong>Peso Vacío:</strong> {{ selectedBulto.weight | number: '1.0-2' }} kg</p>
+                        <p><strong>Capacidad Máxima:</strong> {{ selectedBulto.maxLoad | number: '1.0-2' }} kg</p>
+                        <p>
+                            <strong>Peso de Bulto: </strong>
+                            <input type="number" [(ngModel)]="bultoWeight" name="bultoWeight" step="0.01" class="dim-input">
+                            kg
+                        </p>
+                        <p>
+                            <strong>Cajas a exportar: </strong>
+                            <input type="number" [(ngModel)]="cajasExportar" name="cajasExportar" step="1" class="dim-input">
+                        </p>
+                        <hr>
+                        <h4>Dimensiones:</h4>
+                        <div class="dimensions-grid" *ngIf="!selectedBulto.free">
+                            <p><strong>Largo:</strong> {{ selectedBulto.dimensions.large }} m</p>
+                            <p><strong>Ancho:</strong> {{ selectedBulto.dimensions.width }} m</p>
+                            <p><strong>Alto:</strong> {{ selectedBulto.dimensions.height }} m</p>
+                        </div>
+
+                        <div class="dimensions-grid" *ngIf="selectedBulto.free">
+                            <label>
+                                <strong>Largo:</strong>
+                                <div class="dim-row">
+                                    <input type="number" [(ngModel)]="largeBulto" name="bultoLarge" step="0.01"
+                                        class="dim-input">
+                                    m
+                                </div>
+                            </label>
+                            
+                            <label>
+                                <strong>Ancho:</strong>
+                                <div class="dim-row">
+                                    <input type="number" [(ngModel)]="widthBulto" name="bultoWidth" step="0.01"
+                                        class="dim-input">
+                                    m
+                                </div>
+                            </label>
+                            
+                            <label>
+                                <strong>Alto:</strong>
+                                <div class="dim-row">
+                                    <input type="number" [(ngModel)]="heightBulto" name="bultoHeight" step="0.01"
+                                        class="dim-input">
+                                    m
+                                </div>
+                            </label>
+                        </div>
+                    </ng-container>
+
+                    <ng-template #emptyDetails>
+                        <div class="empty-details-state">
+                            <h3>Detalles</h3>
+                            <p>Seleccione las opciones para ver sus especificaciones.</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+
+            <br>
+
+            <button (click)="calculate()" class="button-confirm calculate-button">
+                <!-- <fa-icon [icon]="faCalculator"></fa-icon> -->
+                Calcular Cubicaje
+            </button>
+
+            <br>
+            <br>
+            <hr>
+            
+            <!-- RESULTADOS -->
+            <div class="results-box" *ngIf="calculationResult">
+                <h3>Resultados</h3>
+            
+                <div class="results-grid">
+                    <!-- Sección 1 -->
+                    <div class="result-section">
+                        <p><strong>Cajas a lo largo:</strong> {{ cajasLargo }}</p>
+                        <p><strong>Cajas a lo ancho:</strong> {{ cajasAncho }}</p>
+                        <p><strong>Nivel de altura:</strong> {{ nivelAltura }}</p>
+                        <p><strong>Nivel de altura real:</strong> {{ nivelAlturaReal }}</p>
+                        <p><strong>Altura máxima:</strong> {{ alturaMaxima }} m</p>
+                    </div>
+            
+                    <!-- Sección 2 -->
+                    <div class="result-section">
+                        <p><strong>Cajas por tarima:</strong> {{ cajasTarima }}</p>
+                        <p><strong>Número de tarimas:</strong> {{ noTarimas }}</p>
+                        <p><strong>Peso bruto de la carga:</strong> {{ pesoBrutoCarga | number: '1.0-2' }} kg</p>
+                        <p><strong>Peso bruto de las tarimas:</strong> {{ pesoBrutoTarimas | number: '1.0-2' }} kg</p>
+                        <p><strong>Peso bruto total:</strong> {{ pesoBrutoTotal | number: '1.0-2' }} kg</p>
+                    </div>
+            
+                    <!-- Sección 3 -->
+                    <div class="result-section">
+                        <p><strong>Altura máxima por tarima:</strong> {{ alturaMaximaTarima | number: '1.0-2' }} m</p>
+                        <p><strong>Tarimas completas:</strong> {{ tarimasCompletas }}</p>
+                        <p><strong>Cajas sobrantes:</strong> {{ cajasSobrantes }}</p>
+                        <p><strong>Tarimas extras:</strong> {{ tarimasExtras }}</p>
+                        <p><strong>Altura de tarima extra:</strong> {{ alturaTarimaExtra | number: '1.0-2' }} m</p>
+                        <p><strong>Peso volumétrico:</strong> {{ pesoVolumetrico | number: '1.0-2' }} kg</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
