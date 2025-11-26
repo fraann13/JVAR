@@ -1,25 +1,41 @@
 <div class="page-wrapper">
     <header class="app-header">
         <div class="header-title">
-            <h1>JVAR Cubicaje</h1>
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                    <path
+                        d="M560.3 301.2C570.7 313 588.6 315.6 602.1 306.7C616.8 296.9 620.8 277 611 262.3L563 190.3C560.2 186.1 556.4 182.6 551.9 180.1L351.4 68.7C332.1 58 308.6 58 289.2 68.7L88.8 180C83.4 183 79.1 187.4 76.2 192.8L27.7 282.7C15.1 306.1 23.9 335.2 47.3 347.8L80.3 365.5L80.3 418.8C80.3 441.8 92.7 463.1 112.7 474.5L288.7 574.2C308.3 585.3 332.2 585.3 351.8 574.2L527.8 474.5C547.9 463.1 560.2 441.9 560.2 418.8L560.2 301.3zM320.3 291.4L170.2 208L320.3 124.6L470.4 208L320.3 291.4zM278.8 341.6L257.5 387.8L91.7 299L117.1 251.8L278.8 341.6z" />
+                </svg>
+                <span>JVAR Cubicaje</span>
+            </h1>
         </div>
 
-        <span *ngIf="isLoggedIn$ | async" class="user-name">
+        @if (isLoggedIn$ | async) {
+        <span class="user-name">
             {{ userName }}
         </span>
+        }
 
         <nav class="header-nav">
-            <button *ngIf="isLoggedIn$ | async" (click)="logout()" class="button-confirm logout-button">
-                <!-- <fa-icon [icon]="faSignOut"></fa-icon> -->
+            @if (isLoggedIn$ | async) {
+            <button (click)="logout()" class="button-confirm logout-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                    <path
+                        d="M224 160C241.7 160 256 145.7 256 128C256 110.3 241.7 96 224 96L160 96C107 96 64 139 64 192L64 448C64 501 107 544 160 544L224 544C241.7 544 256 529.7 256 512C256 494.3 241.7 480 224 480L160 480C142.3 480 128 465.7 128 448L128 192C128 174.3 142.3 160 160 160L224 160zM566.6 342.6C579.1 330.1 579.1 309.8 566.6 297.3L438.6 169.3C426.1 156.8 405.8 156.8 393.3 169.3C380.8 181.8 380.8 202.1 393.3 214.6L466.7 288L256 288C238.3 288 224 302.3 224 320C224 337.7 238.3 352 256 352L466.7 352L393.3 425.4C380.8 437.9 380.8 458.2 393.3 470.7C405.8 483.2 426.1 483.2 438.6 470.7L566.6 342.7z" />
+                </svg>
                 Cerrar Sesión
             </button>
+            }
         </nav>
     </header>
 
     <main>
-        <app-login *ngIf="(isLoggedIn$ | async) === false"></app-login>
+        @if ((isLoggedIn$ | async) === false) {
+        <app-login></app-login>
+        }
 
-        <div *ngIf="isLoggedIn$ | async" class="app-content">
+        @if (isLoggedIn$ | async) {
+        <div class="app-content">
             <div class="selection-details-wrapper">
                 <div class="selection-controls">
                     <label for="contenedor-select">Tipo de contenedor:</label>
@@ -32,22 +48,30 @@
 
                     <br>
 
-                    <div *ngIf="contenedores$ | async as contenedores">
+                    @if (contenedores$ | async; as contenedores) {
+                    <div>
                         <label for="contenedor-select-id">Selecciona un contenedor:</label>
                         <br>
                         <select id="contenedor-select-id" class="contenedor-select"
                             (change)="onContenedorSelect($event)" [disabled]="!selectedType"
                             [(ngModel)]="selectedContenedorId">
                             <option [ngValue]="null" disabled>--- CONTENEDOR ---</option>
-                            <option *ngFor="let c of contenedores" [ngValue]="c.objectId">
+
+                            @for (c of contenedores; track c.objectId) {
+                            <option [ngValue]="c.objectId">
                                 {{ c.name }}
                             </option>
+                            }
                         </select>
 
-                        <p *ngIf="contenedores.length === 0">No hay contenedores disponibles para este tipo.</p>
+                        @if (contenedores.length === 0) {
+                        <p>No hay contenedores disponibles para este tipo.</p>
+                        }
                     </div>
+                    }
 
-                    <div class="loader-div" *ngIf="!(contenedores$ | async)">
+                    @if (!(contenedores$ | async)) {
+                    <div class="loader-div">
                         <div class="dot-spinner">
                             <div class="dot-spinner__dot"></div>
                             <div class="dot-spinner__dot"></div>
@@ -59,22 +83,27 @@
                             <div class="dot-spinner__dot"></div>
                         </div>
                     </div>
+                    }
 
                     <br>
 
                     <div>
                         <label for="contenedor-select-id">Tipo de pallet:</label>
                         <br>
-                        <select id="contenedor-select-id" class="contenedor-select"
-                            (change)="onPalletSelect($event)"
+                        <select id="contenedor-select-id" class="contenedor-select" (change)="onPalletSelect($event)"
                             [(ngModel)]="selectedPalletId">
                             <option [ngValue]="null" disabled>--- PALLET ---</option>
-                            <option *ngFor="let c of pallets$ | async" [ngValue]="c.objectId">
+
+                            @for (c of pallets$ | async; track c.objectId) {
+                            <option [ngValue]="c.objectId">
                                 {{ c.name }}
                             </option>
+                            }
                         </select>
 
-                        <p *ngIf="(pallets$ | async)?.length === 0">No hay pallets disponibles.</p>
+                        @if ((pallets$ | async)?.length === 0) {
+                        <p>No hay pallets disponibles.</p>
+                        }
                     </div>
 
                     <br>
@@ -82,25 +111,32 @@
                     <div>
                         <label for="contenedor-select-id">Tipo de bulto:</label>
                         <br>
-                        <select id="contenedor-select-id" class="contenedor-select"
-                            (change)="onBultoSelect($event)"
+                        <select id="contenedor-select-id" class="contenedor-select" (change)="onBultoSelect($event)"
                             [(ngModel)]="selectedBultoId">
                             <option [ngValue]="null" disabled>--- BULTO ---</option>
-                            <option *ngFor="let c of bultos$ | async" [ngValue]="c.objectId">
+
+                            @for (c of bultos$ | async; track c.objectId) {
+                            <option [ngValue]="c.objectId">
                                 {{ c.name }}
                             </option>
+                            }
                         </select>
 
-                        <p *ngIf="(bultos$ | async)?.length === 0">No hay bultos disponibles.</p>
+                        @if ((bultos$ | async)?.length === 0) {
+                        <p>No hay bultos disponibles.</p>
+                        }
                     </div>
                 </div>
 
                 <!-- Detalles -->
                 <div class="contenedor-details">
-                    <ng-container *ngIf="selectedContenedor$ | async as selectedContenedor; else emptyDetails">
+                    @if (selectedContenedor$ | async; as selectedContenedor) {
+                    <ng-container>
                         <h3>Contenedor: {{ selectedContenedor.name }}</h3>
-                        <p><strong>Carga Máxima:</strong> {{ selectedContenedor.maxLoadCapacity | number: '1.0-2' }} kg</p>
-                        <p><strong>Peso Máximo Bruto:</strong> {{ selectedContenedor.maxWeight | number: '1.0-2' }} kg</p>
+                        <p><strong>Carga Máxima:</strong> {{ selectedContenedor.maxLoadCapacity | number: '1.0-2' }} kg
+                        </p>
+                        <p><strong>Peso Máximo Bruto:</strong> {{ selectedContenedor.maxWeight | number: '1.0-2' }} kg
+                        </p>
                         <hr>
                         <h4>Dimensiones:</h4>
                         <div class="dimensions-grid">
@@ -109,17 +145,17 @@
                             <p><strong>Alto:</strong> {{ selectedContenedor.dimensions.height }} m</p>
                         </div>
                     </ng-container>
-
-                    <ng-template #emptyDetails>
-                        <div class="empty-details-state">
-                            <h3>Detalles</h3>
-                            <p>Seleccione las opciones para ver sus especificaciones.</p>
-                        </div>
-                    </ng-template>
+                    } @else {
+                    <div class="empty-details-state">
+                        <h3>Detalles del contenedor</h3>
+                        <p>Seleccione un contenedor para ver sus especificaciones.</p>
+                    </div>
+                    }
                 </div>
 
                 <div class="contenedor-details">
-                    <ng-container *ngIf="selectedPallet$ | async as selectedPallet; else emptyDetails">
+                    @if (selectedPallet$ | async; as selectedPallet) {
+                    <ng-container>
                         <h3>Pallet: {{ selectedPallet.name }}</h3>
                         <p><strong>Peso Vacío:</strong> {{ selectedPallet.weight | number: '1.0-2' }} kg</p>
                         <p><strong>Capacidad Máxima:</strong> {{ selectedPallet.maxLoad | number: '1.0-2' }} kg</p>
@@ -132,28 +168,30 @@
                             <p><strong>Alto:</strong> {{ selectedPallet.dimensions.height }} m</p>
                         </div>
                     </ng-container>
-
-                    <ng-template #emptyDetails>
-                        <div class="empty-details-state">
-                            <h3>Detalles</h3>
-                            <p>Seleccione las opciones para ver sus especificaciones.</p>
-                        </div>
-                    </ng-template>
+                    } @else {
+                    <div class="empty-details-state">
+                        <h3>Detalles del pallet</h3>
+                        <p>Seleccione un pallet para ver sus especificaciones.</p>
+                    </div>
+                    }
                 </div>
 
                 <div class="contenedor-details">
-                    <ng-container *ngIf="selectedBulto$ | async as selectedBulto; else emptyDetails">
+                    @if (selectedBulto$ | async; as selectedBulto) {
+                    <ng-container>
                         <h3>Bulto: {{ selectedBulto.name }}</h3>
                         <p><strong>Peso Vacío:</strong> {{ selectedBulto.weight | number: '1.0-2' }} kg</p>
                         <p><strong>Capacidad Máxima:</strong> {{ selectedBulto.maxLoad | number: '1.0-2' }} kg</p>
                         <p>
                             <strong>Peso de Bulto: </strong>
-                            <input type="number" [(ngModel)]="bultoWeight" name="bultoWeight" step="0.01" class="dim-input">
+                            <input type="number" [(ngModel)]="bultoWeight" name="bultoWeight" step="0.01"
+                                class="dim-input">
                             kg
                         </p>
                         <p>
-                            <strong>Cajas a exportar: </strong>
-                            <input type="number" [(ngModel)]="cajasExportar" name="cajasExportar" step="1" class="dim-input">
+                            <strong>Cantidad a exportar: </strong>
+                            <input type="number" [(ngModel)]="cajasExportar" name="cajasExportar" step="1"
+                                class="dim-input">
                         </p>
                         <hr>
                         <h4>Dimensiones:</h4>
@@ -172,7 +210,7 @@
                                     m
                                 </div>
                             </label>
-                            
+
                             <label>
                                 <strong>Ancho:</strong>
                                 <div class="dim-row">
@@ -181,7 +219,7 @@
                                     m
                                 </div>
                             </label>
-                            
+
                             <label>
                                 <strong>Alto:</strong>
                                 <div class="dim-row">
@@ -192,31 +230,34 @@
                             </label>
                         </div>
                     </ng-container>
-
-                    <ng-template #emptyDetails>
-                        <div class="empty-details-state">
-                            <h3>Detalles</h3>
-                            <p>Seleccione las opciones para ver sus especificaciones.</p>
-                        </div>
-                    </ng-template>
+                    } @else {
+                    <div class="empty-details-state">
+                        <h3>Detalles del bulto</h3>
+                        <p>Seleccione un bulto para ver sus especificaciones.</p>
+                    </div>
+                    }
                 </div>
             </div>
 
             <br>
 
             <button (click)="calculate()" class="button-confirm calculate-button">
-                <!-- <fa-icon [icon]="faCalculator"></fa-icon> -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                    <path
+                        d="M192 64C156.7 64 128 92.7 128 128L128 512C128 547.3 156.7 576 192 576L448 576C483.3 576 512 547.3 512 512L512 128C512 92.7 483.3 64 448 64L192 64zM224 128L416 128C433.7 128 448 142.3 448 160L448 192C448 209.7 433.7 224 416 224L224 224C206.3 224 192 209.7 192 192L192 160C192 142.3 206.3 128 224 128zM240 296C240 309.3 229.3 320 216 320C202.7 320 192 309.3 192 296C192 282.7 202.7 272 216 272C229.3 272 240 282.7 240 296zM320 320C306.7 320 296 309.3 296 296C296 282.7 306.7 272 320 272C333.3 272 344 282.7 344 296C344 309.3 333.3 320 320 320zM448 296C448 309.3 437.3 320 424 320C410.7 320 400 309.3 400 296C400 282.7 410.7 272 424 272C437.3 272 448 282.7 448 296zM216 416C202.7 416 192 405.3 192 392C192 378.7 202.7 368 216 368C229.3 368 240 378.7 240 392C240 405.3 229.3 416 216 416zM344 392C344 405.3 333.3 416 320 416C306.7 416 296 405.3 296 392C296 378.7 306.7 368 320 368C333.3 368 344 378.7 344 392zM424 416C410.7 416 400 405.3 400 392C400 378.7 410.7 368 424 368C437.3 368 448 378.7 448 392C448 405.3 437.3 416 424 416zM192 488C192 474.7 202.7 464 216 464L328 464C341.3 464 352 474.7 352 488C352 501.3 341.3 512 328 512L216 512C202.7 512 192 501.3 192 488zM424 464C437.3 464 448 474.7 448 488C448 501.3 437.3 512 424 512C410.7 512 400 501.3 400 488C400 474.7 410.7 464 424 464z" />
+                </svg>
                 Calcular Cubicaje
             </button>
 
             <br>
             <br>
             <hr>
-            
+
             <!-- RESULTADOS -->
-            <div class="results-box" *ngIf="calculationResult">
+            @if (calculationResult) {
+            <div class="results-box">
                 <h3>Resultados</h3>
-            
+
                 <div class="results-grid">
                     <!-- Sección 1 -->
                     <div class="result-section">
@@ -226,7 +267,7 @@
                         <p><strong>Nivel de altura real:</strong> {{ nivelAlturaReal }}</p>
                         <p><strong>Altura máxima:</strong> {{ alturaMaxima }} m</p>
                     </div>
-            
+
                     <!-- Sección 2 -->
                     <div class="result-section">
                         <p><strong>Cajas por tarima:</strong> {{ cajasTarima }}</p>
@@ -235,7 +276,7 @@
                         <p><strong>Peso bruto de las tarimas:</strong> {{ pesoBrutoTarimas | number: '1.0-2' }} kg</p>
                         <p><strong>Peso bruto total:</strong> {{ pesoBrutoTotal | number: '1.0-2' }} kg</p>
                     </div>
-            
+
                     <!-- Sección 3 -->
                     <div class="result-section">
                         <p><strong>Altura máxima por tarima:</strong> {{ alturaMaximaTarima | number: '1.0-2' }} m</p>
@@ -247,6 +288,8 @@
                     </div>
                 </div>
             </div>
+            }
         </div>
+        }
     </main>
 </div>

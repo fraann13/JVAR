@@ -32,7 +32,6 @@ export class LoginComponent {
     if (success) {
       this.username = '';
       this.password = '';
-      console.log('Redirigiendo a la vista principal...');
     } else {
       this.loginError = 'Usuario o contraseña incorrectos. Por favor, verifica tus credenciales.';
     }

@@ -5,7 +5,7 @@
     --bg-color: #fff;
     --font-color: #323232;
     --font-color-sub: #666;
-    --header-bg: #c7c7c7cb;
+    --header-bg: #c7c7c7f2;
     --input-focus: #2d8cf0;
     --header-height: 80px;
 }
@@ -51,7 +51,18 @@ app-root {
     flex-shrink: 0;
 }
 
+.header-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
 .header-title h1 {
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+    
     margin: 0;
     font-size: 1.5em;
     font-weight: 900;
@@ -62,7 +73,12 @@ app-root {
     border-radius: 5px;
     background-color: var(--bg-color);
     box-shadow: 4px 4px var(--main-color);
-    display: inline-block;
+}
+
+.header-title h1 svg {
+    width: 32px;
+    height: 32px;
+    fill: currentColor; 
 }
 
 .user-name {
@@ -97,6 +113,7 @@ app-root {
     color: var(--font-color);
     cursor: pointer;
     margin: 0 50px 0 0;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .button-confirm:active {
@@ -105,6 +122,10 @@ app-root {
 }
 
 .logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     width: auto;
     padding: 5px 15px;
     height: 40px;
@@ -112,10 +133,11 @@ app-root {
     border: 2px solid var(--border-logout);
     background-color: var(--bg-logout);
     box-shadow: 4px 4px var(--main-color);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     color: var(--font-color);
     cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .logout-button:hover {
@@ -128,15 +150,25 @@ app-root {
     box-shadow: 2px 2px var(--main-color);
 }
 
+.logout-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor; 
+}
+
 .calculate-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     padding: 8px 20px;
     height: 60px;
+    gap: 10px;
     border-radius: 5px;
     border: 2px solid var(--border-primary, #668fff);
     background-color: var(--bg-primary, #6d9bffce);
     box-shadow: 4px 4px var(--main-color);
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 700;
     color: var(--font-color);
     cursor: pointer;
@@ -153,6 +185,12 @@ app-root {
     box-shadow: 2px 2px var(--main-color);
 }
 
+.calculate-button svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor; 
+}
+
 main {
     padding-top: var(--header-height);
     padding-left: 0;
@@ -164,7 +202,8 @@ main {
 }
 
 .app-content {
-    margin: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
     max-width: 100%;
 
     border: 2px solid var(--main-color);
@@ -346,18 +385,6 @@ main {
     opacity: 0.15;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-    .results-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .results-grid > .result-section::after {
-        display: none;
-    }
-}
-
 /* Loader */
 .loader-div {
     display: flex;
@@ -469,5 +496,83 @@ main {
     50% {
         transform: scale(1);
         opacity: 1;
+    }
+}
+
+/* ---------- RESPONSIVE GENERAL ---------- */
+
+/* 1) Laptops / pantallas medianas */
+@media (max-width: 1200px) {
+    .contenedor-details {
+        width: 350px; /* evita desbordes */
+    }
+
+    .contenedor-select {
+        width: 250px;
+    }
+}
+
+/* 2) Tablets y móviles grandes */
+@media (max-width: 900px) {
+    .results-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .results-grid > .result-section::after {
+        display: none;
+    }
+    
+    .selection-details-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+
+    .contenedor-details {
+        width: 85%;
+    }
+
+    .contenedor-select {
+        width: 85%;
+    }
+
+    .selection-controls {
+        width: 85%;
+    }
+
+    main {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+
+/* 3) Móviles pequeños (<600px) */
+@media (max-width: 600px) {
+    .app-content {
+        padding: 20px;
+    }
+
+    .header-title h1 {
+        font-size: 1.2em;
+    }
+
+    .user-name {
+        display: none; /* opcional para limpiar espacio */
+    }
+
+    .contenedor-select,
+    .dim-input {
+        width: 100%;
+    }
+
+    .dimensions-grid {
+        grid-template-columns: 1fr; /* 1 columna */
+    }
+
+    .calculate-button {
+        height: 50px;
+        font-size: 15px;
     }
 }
