@@ -3,7 +3,7 @@
 # --- Variables de Entorno y Scripts Locales ---
 .env.local
 start-local.js
-./public/env.js
+public/env.js
 
 # Angular environments
 src/environments/environment.ts
