@@ -1,4 +1,4 @@
 {
-    "buildCommand": "chmod +x create-env.sh && ./create-env.sh && ng build --configuration production",
+    "buildCommand": "ng build --configuration production",
     "outputDirectory": "dist/container-calc/browser"
 }
