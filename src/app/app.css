@@ -202,8 +202,7 @@ main {
 }
 
 .app-content {
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin: 25px;
     max-width: 100%;
 
     border: 2px solid var(--main-color);
@@ -504,7 +503,7 @@ main {
 /* 1) Laptops / pantallas medianas */
 @media (max-width: 1200px) {
     .contenedor-details {
-        width: 350px; /* evita desbordes */
+        width: 350px;
     }
 
     .contenedor-select {
@@ -551,6 +550,7 @@ main {
 /* 3) Móviles pequeños (<600px) */
 @media (max-width: 600px) {
     .app-content {
+        margin: 25px;
         padding: 20px;
     }
 
@@ -559,7 +559,22 @@ main {
     }
 
     .user-name {
-        display: none; /* opcional para limpiar espacio */
+        display: none;
+    }
+
+    .logout-button {
+        width: 40px;
+        padding: 6px;
+        gap: 0;
+        justify-content: center;
+        font-size: 0;
+    }
+
+    .logout-button svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+        font-size: initial;
     }
 
     .contenedor-select,
@@ -568,7 +583,7 @@ main {
     }
 
     .dimensions-grid {
-        grid-template-columns: 1fr; /* 1 columna */
+        grid-template-columns: 1fr;
     }
 
     .calculate-button {
