@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 //import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login';
-import { Observable, map, take, switchMap, of } from 'rxjs';
+import { PalletView } from './pallet-view/pallet-view';
+import { Observable, map, take, switchMap, of, combineLatest } from 'rxjs';
 
 // Services
 import { AuthService } from './services/auth.service';
@@ -19,7 +20,7 @@ import { Pallet } from './models/pallet.model';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, LoginComponent, FormsModule],
+  imports: [CommonModule, LoginComponent, FormsModule, PalletView],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -32,6 +33,8 @@ export class App implements OnInit {
   // Bultos
   bultos$: Observable<Bulto[]> | undefined;
   selectedBulto$: Observable<Bulto | undefined> | undefined;
+
+  selectedBultoValue?: Bulto;
   selectedBultoId: string | null = null;
 
   // Contenedores
@@ -45,6 +48,8 @@ export class App implements OnInit {
   // Pallets
   pallets$: Observable<Pallet[]> | undefined;
   selectedPallet$: Observable<Pallet | undefined> | undefined;
+
+  selectedPalletValue?: Pallet;
   selectedPalletId: string | null = null;
 
   // Resultados
@@ -62,6 +67,7 @@ export class App implements OnInit {
   altoEstiba: number = 0;
   nivelAltura: number = 0;
   nivelAlturaReal: number = 0;
+  alturaReal: number = 0;
   alturaMaxima: number = 0;
 
   cajasTarima: number = 0;
@@ -76,6 +82,11 @@ export class App implements OnInit {
   tarimasExtras: number = 0;
   alturaTarimaExtra: number = 0;
   pesoVolumetrico: number = 0;
+
+  tarimasContenedor: number = 0;
+
+  palletDims: any;
+  cajaDims: any;
 
   constructor(
     private authService: AuthService,
@@ -117,6 +128,16 @@ export class App implements OnInit {
       this.filterAndLoadContenedores();
       this.loadPallets();
       this.loadBultos();
+
+      combineLatest([
+        this.selectedPallet$ ?? of(undefined),
+        this.selectedBulto$ ?? of(undefined)
+      ]).subscribe(([pallet, bulto]) => {
+        this.selectedPalletValue = pallet ?? undefined;
+        this.selectedBultoValue = bulto ?? undefined;
+
+        this.updateDims();
+      });
     }
   }
 
@@ -149,8 +170,13 @@ export class App implements OnInit {
     this.bultos$ = this.bultoService.getBultos();
   }
 
-  // Eventos
+  // ============================
+  // SELECTORES
+  // ============================
+
   onTypeSelect(event: Event) {
+    this.clearFields();
+
     const target = event.target as HTMLSelectElement;
 
     this.selectedType = target.value ? parseInt(target.value, 10) : null;
@@ -161,6 +187,8 @@ export class App implements OnInit {
   }
 
   onContenedorSelect(event: Event) {
+    this.clearFields();
+
     const target = event.target as HTMLSelectElement;
     let selectedId = target.value;
 
@@ -180,6 +208,8 @@ export class App implements OnInit {
   }
 
   onPalletSelect(event: Event) {
+    this.clearFields();
+
     const target = event.target as HTMLSelectElement;
     let selectedId = target.value;
 
@@ -199,6 +229,8 @@ export class App implements OnInit {
   }
 
   onBultoSelect(event: Event) {
+    this.clearFields();
+
     const target = event.target as HTMLSelectElement;
     let selectedId = target.value;
 
@@ -227,6 +259,65 @@ export class App implements OnInit {
 
   isLoggingOut = signal(false);
 
+  // ============================
+  // CALCULAR DIMENSIONES PARA <app-pallet-view>
+  // ============================
+
+  updateDims() {
+    const pallet = this.selectedPalletValue;
+    const bulto = this.selectedBultoValue;
+
+    if (!pallet || !bulto) return;
+    if (this.cajasLargo <= 0 || this.cajasAncho <= 0) return;
+
+    this.palletDims = {
+      large: (pallet.dimensions.large ?? 1.2) * 100,
+      width: (pallet.dimensions.width ?? 1) * 100,
+      height: (pallet.dimensions.height ?? 0.14) * 100
+    };
+
+    this.cajaDims = {
+      large: ((bulto.dimensions.large ?? 1.2) * 100) / this.cajasLargo,
+      width: ((bulto.dimensions.width ?? 1) * 100) / this.cajasAncho,
+      height: (bulto.dimensions.height ?? 0.24) * 100
+    };
+
+    this.cdr.detectChanges();
+  }
+
+  clearFields() {
+    this.calculationResult = false;
+
+    this.cajasLargo = 0;
+    this.cajasAncho = 0;
+    this.altoEstiba = 0;
+    this.nivelAltura = 0;
+    this.nivelAlturaReal = 0;
+    this.alturaMaxima = 0;
+
+    this.cajasTarima = 0;
+    this.noTarimas = 0;
+    this.pesoBrutoCarga = 0;
+    this.pesoBrutoTarimas = 0;
+    this.pesoBrutoTotal = 0;
+
+    this.alturaMaximaTarima = 0;
+    this.tarimasCompletas = 0;
+    this.cajasSobrantes = 0;
+    this.tarimasExtras = 0;
+    this.alturaTarimaExtra = 0;
+    this.pesoVolumetrico = 0;
+
+    this.tarimasContenedor = 0;
+
+    this.palletDims = undefined;
+    this.cajaDims = undefined;
+  }
+
+  // ============================
+  // CÁLCULOS
+  // ============================
+
   async calculate(): Promise<void> {
     const Swal = (await import('sweetalert2')).default;
 
@@ -254,9 +345,9 @@ export class App implements OnInit {
 
       if (!selectedContenedor || !selectedPallet || !selectedBulto) {
         await Swal.fire({
-          title: 'Error',
+          title: 'Atención',
           text: 'Por favor selecciona contenedor, pallet y bulto válidos.',
-          icon: 'error',
+          icon: 'warning',
           confirmButtonText: 'Aceptar',
           allowOutsideClick: false
         });
@@ -266,9 +357,9 @@ export class App implements OnInit {
 
       if (this.bultoWeight <= 0) {
         await Swal.fire({
-          title: 'Dato inválido',
+          title: 'Atención',
           text: 'El peso del bulto debe ser mayor a 0.',
-          icon: 'error',
+          icon: 'warning',
           confirmButtonText: 'Aceptar',
           allowOutsideClick: false
         });
@@ -278,9 +369,9 @@ export class App implements OnInit {
 
       if (this.cajasExportar <= 0) {
         await Swal.fire({
-          title: 'Dato inválido',
-          text: 'La cantidad de cajas a exportar debe ser mayor a 0.',
-          icon: 'error',
+          title: 'Atención',
+          text: 'La cantidad a exportar debe ser mayor a 0.',
+          icon: 'warning',
           confirmButtonText: 'Aceptar',
           allowOutsideClick: false
         });
@@ -295,9 +386,9 @@ export class App implements OnInit {
           !this.heightBulto || isNaN(this.heightBulto) || this.heightBulto <= 0
         ) {
           await Swal.fire({
-            title: 'Dimensiones inválidas',
+            title: 'Atención',
             text: 'Todas las dimensiones del bulto deben ser mayores a 0.',
-            icon: 'error',
+            icon: 'warning',
             confirmButtonText: 'Aceptar',
             allowOutsideClick: false
           });
@@ -309,6 +400,34 @@ export class App implements OnInit {
         this.widthBulto = selectedBulto.dimensions.width;
         this.heightBulto = selectedBulto.dimensions.height;
       }
+
+      // // DEBUG
+      // console.log('Selected Contenedor:', selectedContenedor);
+      // console.log('Selected Pallet:', selectedPallet);
+      // console.log('Selected Bulto:', selectedBulto);
+
+      // console.log("===============================");
+
+      // console.log('Large Contenedor:', selectedContenedor.dimensions.large);
+      // console.log('Width Contenedor:', selectedContenedor.dimensions.width);
+      // console.log('Height Contenedor:', selectedContenedor.dimensions.height);
+
+      // console.log("===============================");
+
+      // console.log('Large Pallet:', selectedPallet.dimensions.large);
+      // console.log('Width Pallet:', selectedPallet.dimensions.width);
+      // console.log('Height Pallet:', selectedPallet.dimensions.height);
+
+      // console.log("===============================");
+
+      // console.log('Large Bulto:', this.largeBulto);
+      // console.log('Width Bulto:', this.widthBulto);
+      // console.log('Height Bulto:', this.heightBulto);
+
+      // console.log("===============================");
+
+      // console.log('Bulto Weight:', this.bultoWeight);
+      // console.log('Cajas a Exportar:', this.cajasExportar);
 
       // -------------------------------
       // AL LLEGAR AQUÍ TODO ES VÁLIDO
@@ -322,48 +441,84 @@ export class App implements OnInit {
         }
       });
 
-      // -------------------------------
-      // CÁLCULOS
-      // -------------------------------
-      this.cajasLargo = Math.floor(selectedPallet.dimensions.large / this.largeBulto);
-      this.cajasAncho = Math.floor(selectedPallet.dimensions.width / this.widthBulto);
+      // ================================
+      // Conversión a centímetros
+      // ================================
+      const toCM = (m: number) => Math.round(m * 100);
 
-      this.altoEstiba = (selectedContenedor.dimensions.height - selectedPallet.dimensions.height) / this.heightBulto;
+      const containerLargeCM = toCM(selectedContenedor.dimensions.large);
+      const containerWidthCM = toCM(selectedContenedor.dimensions.width);
+      //const containerHeightCM = toCM(selectedContenedor.dimensions.height);
+
+      const palletLargeCM = toCM(selectedPallet.dimensions.large);
+      const palletWidthCM = toCM(selectedPallet.dimensions.width);
+      const palletHeightCM = toCM(selectedPallet.dimensions.height);
+
+      const bultoLargeCM = toCM(this.largeBulto);
+      const bultoWidthCM = toCM(this.widthBulto);
+      const bultoHeightCM = toCM(this.heightBulto);
+
+      const contHeightCM = toCM(selectedContenedor.dimensions.height);
+
+      // ================================
+      // CÁLCULOS CON PRECISIÓN
+      // ================================
+      this.cajasLargo = Math.floor(palletLargeCM / bultoLargeCM);
+      this.cajasAncho = Math.floor(palletWidthCM / bultoWidthCM);
+
+      this.altoEstiba = (contHeightCM - palletHeightCM) / bultoHeightCM;
       this.nivelAltura = Math.floor(this.altoEstiba);
 
       this.alturaMaxima = parseFloat(((this.nivelAltura * this.heightBulto) + selectedPallet.dimensions.height).toFixed(2));
 
-      if (this.alturaMaxima > this.altoEstiba * this.heightBulto) {
+      // Ajustar altura real
+      if (this.alturaMaxima > (this.altoEstiba * this.heightBulto)) {
         this.nivelAlturaReal = this.nivelAltura - 1;
       } else {
         this.nivelAlturaReal = this.nivelAltura;
       }
 
+      this.alturaReal = parseFloat(((this.nivelAlturaReal * this.heightBulto) + selectedPallet.dimensions.height).toFixed(2));
+
       this.cajasTarima = this.cajasLargo * this.cajasAncho * this.nivelAlturaReal;
-      this.noTarimas = Math.ceil(this.cajasExportar / this.nivelAlturaReal);
+
+      this.noTarimas = Math.ceil(this.cajasExportar / this.cajasTarima);
 
       this.pesoBrutoCarga = parseFloat((this.cajasExportar * this.bultoWeight).toFixed(2));
       this.pesoBrutoTarimas = parseFloat((this.noTarimas * selectedPallet.weight).toFixed(2));
       this.pesoBrutoTotal = parseFloat((this.pesoBrutoCarga + this.pesoBrutoTarimas).toFixed(2));
 
-      this.alturaMaximaTarima = this.nivelAlturaReal * selectedPallet.dimensions.height + selectedPallet.dimensions.height;
+      this.alturaMaximaTarima =
+        (this.nivelAlturaReal * this.heightBulto) + selectedPallet.dimensions.height;
+
       this.tarimasCompletas = Math.floor(this.cajasExportar / this.cajasTarima);
 
       this.cajasSobrantes = this.cajasExportar - (this.tarimasCompletas * this.cajasTarima);
       this.tarimasExtras = Math.ceil(this.cajasSobrantes / this.cajasTarima);
 
-      this.alturaTarimaExtra = (this.cajasSobrantes / (this.cajasLargo * this.cajasAncho)) * this.heightBulto + selectedPallet.dimensions.height;
+      this.alturaTarimaExtra =
+        (this.cajasSobrantes / (this.cajasLargo * this.cajasAncho)) * this.heightBulto +
+        selectedPallet.dimensions.height;
 
-      this.pesoVolumetrico = parseFloat(((this.cajasTarima *
-        selectedPallet.dimensions.large *
-        selectedPallet.dimensions.width *
-        this.alturaMaximaTarima +
-        this.tarimasExtras *
-        selectedPallet.dimensions.large *
-        selectedPallet.dimensions.width *
-        this.alturaTarimaExtra) / this.factorEstiba).toFixed(2));
+      this.pesoVolumetrico = parseFloat((
+        (this.cajasTarima *
+          selectedPallet.dimensions.large *
+          selectedPallet.dimensions.width *
+          this.alturaMaximaTarima +
+          this.tarimasExtras *
+          selectedPallet.dimensions.large *
+          selectedPallet.dimensions.width *
+          this.alturaTarimaExtra
+        ) / this.factorEstiba
+      ).toFixed(2));
+
+      this.tarimasContenedor = Math.floor(
+        (containerLargeCM * containerWidthCM) /
+        (palletLargeCM * palletWidthCM)
+      );
 
       this.calculationResult = true;
+      this.updateDims();
     } finally {
       Swal.hideLoading();
       Swal.close();

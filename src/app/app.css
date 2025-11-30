@@ -221,6 +221,25 @@ main {
     width: 100%;
 }
 
+.selection-details-wrapper .contenedor-details {
+    display: block;
+}
+
+/* Agrupamos automáticamente las tarjetas en una columna */
+.selection-details-wrapper .contenedor-details {
+    width: 300px;
+}
+
+.selection-details-wrapper > .contenedor-details {
+    margin-bottom: 20px;
+}
+
+.details-column {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
 .selection-controls {
     display: flex;
     flex-direction: column;
@@ -240,7 +259,6 @@ main {
     text-align: left;
 
     flex-shrink: 1;
-    width: 450px;
     margin-top: 0;
 }
 
@@ -252,8 +270,8 @@ main {
 }
 
 .dimensions-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 15px;
     margin-top: 15px;
     text-align: center;
@@ -351,10 +369,17 @@ main {
     text-align: center;
 }
 
+.pallet-view {
+    margin-top: 20px;
+    border-radius: 5px;
+    border: 2px solid var(--main-color);
+    box-shadow: 4px 4px var(--main-color);
+}
+
 /* GRID */
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 25px;
     align-items: start;
     position: relative;

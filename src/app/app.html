@@ -128,114 +128,111 @@
                     </div>
                 </div>
 
-                <!-- Detalles -->
-                <div class="contenedor-details">
-                    @if (selectedContenedor$ | async; as selectedContenedor) {
-                    <ng-container>
-                        <h3>Contenedor: {{ selectedContenedor.name }}</h3>
-                        <p><strong>Carga Máxima:</strong> {{ selectedContenedor.maxLoadCapacity | number: '1.0-2' }} kg
-                        </p>
-                        <p><strong>Peso Máximo Bruto:</strong> {{ selectedContenedor.maxWeight | number: '1.0-2' }} kg
-                        </p>
-                        <hr>
-                        <h4>Dimensiones:</h4>
-                        <div class="dimensions-grid">
-                            <p><strong>Largo:</strong> {{ selectedContenedor.dimensions.large }} m</p>
-                            <p><strong>Ancho:</strong> {{ selectedContenedor.dimensions.width }} m</p>
-                            <p><strong>Alto:</strong> {{ selectedContenedor.dimensions.height }} m</p>
+                <!-- ============= DETALLES ============= -->
+                <div class="details-column">
+                    <div class="contenedor-details">
+                        @if (selectedContenedor$ | async; as selectedContenedor) {
+                        <ng-container>
+                            <h3>Contenedor: {{ selectedContenedor.name }}</h3>
+                            <p><strong>Carga Máxima:</strong> {{ selectedContenedor.maxLoadCapacity | number: '1.0-2' }} kg
+                            </p>
+                            <p><strong>Peso Máximo Bruto:</strong> {{ selectedContenedor.maxWeight | number: '1.0-2' }} kg
+                            </p>
+                            <hr>
+                            <h4>Dimensiones:</h4>
+                            <div class="dimensions-grid">
+                                <p><strong>Largo:</strong> {{ selectedContenedor.dimensions.large }} m</p>
+                                <p><strong>Ancho:</strong> {{ selectedContenedor.dimensions.width }} m</p>
+                                <p><strong>Alto:</strong> {{ selectedContenedor.dimensions.height }} m</p>
+                            </div>
+                        </ng-container>
+                        } @else {
+                        <div class="empty-details-state">
+                            <h3>Detalles del contenedor</h3>
+                            <p>Seleccione un contenedor para ver sus especificaciones.</p>
                         </div>
-                    </ng-container>
-                    } @else {
-                    <div class="empty-details-state">
-                        <h3>Detalles del contenedor</h3>
-                        <p>Seleccione un contenedor para ver sus especificaciones.</p>
+                        }
                     </div>
-                    }
-                </div>
-
-                <div class="contenedor-details">
-                    @if (selectedPallet$ | async; as selectedPallet) {
-                    <ng-container>
-                        <h3>Pallet: {{ selectedPallet.name }}</h3>
-                        <p><strong>Peso Vacío:</strong> {{ selectedPallet.weight | number: '1.0-2' }} kg</p>
-                        <p><strong>Capacidad Máxima:</strong> {{ selectedPallet.maxLoad | number: '1.0-2' }} kg</p>
-
-                        <hr>
-                        <h4>Dimensiones:</h4>
-                        <div class="dimensions-grid">
-                            <p><strong>Largo:</strong> {{ selectedPallet.dimensions.large }} m</p>
-                            <p><strong>Ancho:</strong> {{ selectedPallet.dimensions.width }} m</p>
-                            <p><strong>Alto:</strong> {{ selectedPallet.dimensions.height }} m</p>
+                
+                    <div class="contenedor-details">
+                        @if (selectedPallet$ | async; as selectedPallet) {
+                        <ng-container>
+                            <h3>Pallet: {{ selectedPallet.name }}</h3>
+                            <p><strong>Peso Vacío:</strong> {{ selectedPallet.weight | number: '1.0-2' }} kg</p>
+                            <p><strong>Capacidad Máxima:</strong> {{ selectedPallet.maxLoad | number: '1.0-2' }} kg</p>
+                
+                            <hr>
+                            <h4>Dimensiones:</h4>
+                            <div class="dimensions-grid">
+                                <p><strong>Largo:</strong> {{ selectedPallet.dimensions.large }} m</p>
+                                <p><strong>Ancho:</strong> {{ selectedPallet.dimensions.width }} m</p>
+                                <p><strong>Alto:</strong> {{ selectedPallet.dimensions.height }} m</p>
+                            </div>
+                        </ng-container>
+                        } @else {
+                        <div class="empty-details-state">
+                            <h3>Detalles del pallet</h3>
+                            <p>Seleccione un pallet para ver sus especificaciones.</p>
                         </div>
-                    </ng-container>
-                    } @else {
-                    <div class="empty-details-state">
-                        <h3>Detalles del pallet</h3>
-                        <p>Seleccione un pallet para ver sus especificaciones.</p>
+                        }
                     </div>
-                    }
-                </div>
-
-                <div class="contenedor-details">
-                    @if (selectedBulto$ | async; as selectedBulto) {
-                    <ng-container>
-                        <h3>Bulto: {{ selectedBulto.name }}</h3>
-                        <p><strong>Peso Vacío:</strong> {{ selectedBulto.weight | number: '1.0-2' }} kg</p>
-                        <p><strong>Capacidad Máxima:</strong> {{ selectedBulto.maxLoad | number: '1.0-2' }} kg</p>
-                        <p>
-                            <strong>Peso de Bulto: </strong>
-                            <input type="number" [(ngModel)]="bultoWeight" name="bultoWeight" step="0.01"
-                                class="dim-input">
-                            kg
-                        </p>
-                        <p>
-                            <strong>Cantidad a exportar: </strong>
-                            <input type="number" [(ngModel)]="cajasExportar" name="cajasExportar" step="1"
-                                class="dim-input">
-                        </p>
-                        <hr>
-                        <h4>Dimensiones:</h4>
-                        <div class="dimensions-grid" *ngIf="!selectedBulto.free">
-                            <p><strong>Largo:</strong> {{ selectedBulto.dimensions.large }} m</p>
-                            <p><strong>Ancho:</strong> {{ selectedBulto.dimensions.width }} m</p>
-                            <p><strong>Alto:</strong> {{ selectedBulto.dimensions.height }} m</p>
+                
+                    <div class="contenedor-details">
+                        @if (selectedBulto$ | async; as selectedBulto) {
+                        <ng-container>
+                            <h3>Bulto: {{ selectedBulto.name }}</h3>
+                            <p><strong>Peso Vacío:</strong> {{ selectedBulto.weight | number: '1.0-2' }} kg</p>
+                            <p><strong>Capacidad Máxima:</strong> {{ selectedBulto.maxLoad | number: '1.0-2' }} kg</p>
+                            <p>
+                                <strong>Peso de Bulto: </strong>
+                                <input type="number" [(ngModel)]="bultoWeight" name="bultoWeight" step="0.01" class="dim-input">
+                                kg
+                            </p>
+                            <p>
+                                <strong>Cantidad a exportar: </strong>
+                                <input type="number" [(ngModel)]="cajasExportar" name="cajasExportar" step="1" class="dim-input">
+                            </p>
+                            <hr>
+                            <h4>Dimensiones:</h4>
+                            <div class="dimensions-grid" *ngIf="!selectedBulto.free">
+                                <p><strong>Largo:</strong> {{ selectedBulto.dimensions.large }} m</p>
+                                <p><strong>Ancho:</strong> {{ selectedBulto.dimensions.width }} m</p>
+                                <p><strong>Alto:</strong> {{ selectedBulto.dimensions.height }} m</p>
+                            </div>
+                
+                            <div class="dimensions-grid" *ngIf="selectedBulto.free">
+                                <label>
+                                    <strong>Largo:</strong>
+                                    <div class="dim-row">
+                                        <input type="number" [(ngModel)]="largeBulto" name="bultoLarge" step="0.01" class="dim-input">
+                                        m
+                                    </div>
+                                </label>
+                
+                                <label>
+                                    <strong>Ancho:</strong>
+                                    <div class="dim-row">
+                                        <input type="number" [(ngModel)]="widthBulto" name="bultoWidth" step="0.01" class="dim-input">
+                                        m
+                                    </div>
+                                </label>
+                
+                                <label>
+                                    <strong>Alto:</strong>
+                                    <div class="dim-row">
+                                        <input type="number" [(ngModel)]="heightBulto" name="bultoHeight" step="0.01" class="dim-input">
+                                        m
+                                    </div>
+                                </label>
+                            </div>
+                        </ng-container>
+                        } @else {
+                        <div class="empty-details-state">
+                            <h3>Detalles del bulto</h3>
+                            <p>Seleccione un bulto para ver sus especificaciones.</p>
                         </div>
-
-                        <div class="dimensions-grid" *ngIf="selectedBulto.free">
-                            <label>
-                                <strong>Largo:</strong>
-                                <div class="dim-row">
-                                    <input type="number" [(ngModel)]="largeBulto" name="bultoLarge" step="0.01"
-                                        class="dim-input">
-                                    m
-                                </div>
-                            </label>
-
-                            <label>
-                                <strong>Ancho:</strong>
-                                <div class="dim-row">
-                                    <input type="number" [(ngModel)]="widthBulto" name="bultoWidth" step="0.01"
-                                        class="dim-input">
-                                    m
-                                </div>
-                            </label>
-
-                            <label>
-                                <strong>Alto:</strong>
-                                <div class="dim-row">
-                                    <input type="number" [(ngModel)]="heightBulto" name="bultoHeight" step="0.01"
-                                        class="dim-input">
-                                    m
-                                </div>
-                            </label>
-                        </div>
-                    </ng-container>
-                    } @else {
-                    <div class="empty-details-state">
-                        <h3>Detalles del bulto</h3>
-                        <p>Seleccione un bulto para ver sus especificaciones.</p>
+                        }
                     </div>
-                    }
                 </div>
             </div>
 
@@ -253,8 +250,16 @@
             <br>
             <hr>
 
+            <!-- <app-pallet-view
+                [cajasLargo]="2"
+                [cajasAncho]="2"
+                [niveles]="5"
+                [palletDims]="{ large: 120, width: 100, height: 14 }"
+                [cajaDims]="{ large: 120 / 2, width: 100 / 3, height: 40 }">
+            </app-pallet-view>  -->
+
             <!-- RESULTADOS -->
-            @if (calculationResult) {
+            @if (calculationResult) {            
             <div class="results-box">
                 <h3>Resultados</h3>
 
@@ -265,29 +270,50 @@
                         <p><strong>Cajas a lo ancho:</strong> {{ cajasAncho }}</p>
                         <p><strong>Nivel de altura:</strong> {{ nivelAltura }}</p>
                         <p><strong>Nivel de altura real:</strong> {{ nivelAlturaReal }}</p>
-                        <p><strong>Altura máxima:</strong> {{ alturaMaxima }} m</p>
+                        <p><strong>Altura real:</strong> {{ alturaReal | number: '1.0-2' }} m</p>
+                        <p><strong>Altura máxima:</strong> {{ alturaMaxima | number: '1.0-2' }} m</p>
                     </div>
 
                     <!-- Sección 2 -->
                     <div class="result-section">
                         <p><strong>Cajas por tarima:</strong> {{ cajasTarima }}</p>
                         <p><strong>Número de tarimas:</strong> {{ noTarimas }}</p>
-                        <p><strong>Peso bruto de la carga:</strong> {{ pesoBrutoCarga | number: '1.0-2' }} kg</p>
-                        <p><strong>Peso bruto de las tarimas:</strong> {{ pesoBrutoTarimas | number: '1.0-2' }} kg</p>
-                        <p><strong>Peso bruto total:</strong> {{ pesoBrutoTotal | number: '1.0-2' }} kg</p>
+                        <p><strong>Tarimas por contenedor:</strong> {{ tarimasContenedor }}</p>
                     </div>
 
                     <!-- Sección 3 -->
                     <div class="result-section">
-                        <p><strong>Altura máxima por tarima:</strong> {{ alturaMaximaTarima | number: '1.0-2' }} m</p>
+                        <!-- <p><strong>Altura máxima por tarima:</strong> {{ alturaMaximaTarima | number: '1.0-2' }} m</p> -->
                         <p><strong>Tarimas completas:</strong> {{ tarimasCompletas }}</p>
                         <p><strong>Cajas sobrantes:</strong> {{ cajasSobrantes }}</p>
                         <p><strong>Tarimas extras:</strong> {{ tarimasExtras }}</p>
                         <p><strong>Altura de tarima extra:</strong> {{ alturaTarimaExtra | number: '1.0-2' }} m</p>
                         <p><strong>Peso volumétrico:</strong> {{ pesoVolumetrico | number: '1.0-2' }} kg</p>
                     </div>
+
+                    <div class="result-section">
+                        <p><strong>Peso bruto de la carga:</strong> {{ pesoBrutoCarga | number: '1.0-2' }} kg</p>
+                        <p><strong>Peso bruto de las tarimas:</strong> {{ pesoBrutoTarimas | number: '1.0-2' }} kg</p>
+                        <p><strong>Peso bruto total:</strong> {{ pesoBrutoTotal | number: '1.0-2' }} kg</p>
+                    </div>
                 </div>
             </div>
+
+            <app-pallet-view class="pallet-view"
+                [cajasLargo]="cajasLargo"
+                [cajasAncho]="cajasAncho"
+                [niveles]="nivelAlturaReal"
+                [palletDims]="{ 
+                    large: ((selectedPallet$ | async)?.dimensions?.large ?? 1.2) * 100,
+                    width: ((selectedPallet$ | async)?.dimensions?.width ?? 1.0) * 100,
+                    height: ((selectedPallet$ | async)?.dimensions?.height ?? 0.15) * 100
+                }"
+                [cajaDims]="{
+                    large: ((selectedBulto$ | async)?.dimensions?.large ?? 0.40) * 100,
+                    width: ((selectedBulto$ | async)?.dimensions?.width ?? 0.30) * 100,
+                    height: ((selectedBulto$ | async)?.dimensions?.height ?? 0.25) * 100
+                }">
+            </app-pallet-view>
             }
         </div>
         }
