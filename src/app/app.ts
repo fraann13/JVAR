@@ -36,7 +36,7 @@ export class App implements OnInit {
 
   selectedBultoValue?: Bulto;
   selectedBultoId: string | null = null;
-
+  
   // Contenedores
   contenedores$: Observable<Contenedor[]> | undefined;
   contenedoresFiltrados: Contenedor[] = [];
@@ -56,6 +56,10 @@ export class App implements OnInit {
   bultoWeight: number = 0;
   cajasExportar: number = 0;
   factorEstiba: number = 0.0025;
+
+  // Dimensiones del bulto (custom)
+  emptyWeightBulto: number = 0;
+  maxCapacityBulto: number = 0;
 
   largeBulto: number | null = null;
   widthBulto: number | null = null;
@@ -87,6 +91,8 @@ export class App implements OnInit {
 
   palletDims: any;
   cajaDims: any;
+
+  cleanIdBulto: string = '';
 
   constructor(
     private authService: AuthService,
@@ -241,18 +247,45 @@ export class App implements OnInit {
       return;
     }
 
-    const cleanId = selectedId.replace(/^\d+:\s*/, '').trim();
-    this.selectedBulto$ = of(cleanId).pipe(
-      switchMap(id => {
-        return this.bultoService.getBultoById(id);
-      })
-    );
+    this.cleanIdBulto = selectedId.replace(/^\d+:\s*/, '').trim();
+    if (this.cleanIdBulto === 'custom') {
+      this.largeBulto = 0;
+      this.widthBulto = 0;
+      this.heightBulto = 0;
 
-    this.selectedBulto$.subscribe(bulto => {
+      const customBulto: Bulto = {
+        objectId: 'custom',
+        name: 'Bulto Personalizado',
+        dimensions: {
+          large: this.largeBulto ?? 0,
+          width: this.widthBulto ?? 0,
+          height: this.heightBulto ?? 0
+        },
+        weight: 0,
+        maxLoad: 0
+      } as Bulto;
+
+      // Emit a placeholder Bulto so the template updates immediately
+      this.selectedBulto$ = of(customBulto);
+      this.selectedBultoValue = customBulto;
+      this.cdr.detectChanges();
+    } else {
+      this.selectedBulto$ = of(this.cleanIdBulto).pipe(
+        switchMap(id => {
+          return this.bultoService.getBultoById(id);
+        })
+      );
+    }
+
+    (this.selectedBulto$ ?? of(undefined)).pipe(take(1)).subscribe(bulto => {
       if (bulto) {
         this.largeBulto = bulto.dimensions.large;
         this.widthBulto = bulto.dimensions.width;
         this.heightBulto = bulto.dimensions.height;
+      } else {
+        this.largeBulto = 0;
+        this.widthBulto = 0;
+        this.heightBulto = 0;
       }
     });
   }
@@ -319,6 +352,8 @@ export class App implements OnInit {
   // ============================
 
   async calculate(): Promise<void> {
+    this.clearFields();
+    this.calculationResult = false;
     const Swal = (await import('sweetalert2')).default;
 
     // Swal de carga
@@ -379,8 +414,10 @@ export class App implements OnInit {
         return;
       }
 
-      if (selectedBulto.free) {
+      if (this.cleanIdBulto === 'custom') {
         if (
+          !this.emptyWeightBulto || isNaN(this.emptyWeightBulto) || this.emptyWeightBulto < 0 ||
+          !this.maxCapacityBulto || isNaN(this.maxCapacityBulto) || this.maxCapacityBulto <= 0 ||
           !this.largeBulto || isNaN(this.largeBulto) || this.largeBulto <= 0 ||
           !this.widthBulto || isNaN(this.widthBulto) || this.widthBulto <= 0 ||
           !this.heightBulto || isNaN(this.heightBulto) || this.heightBulto <= 0
@@ -396,38 +433,13 @@ export class App implements OnInit {
           return;
         }
       } else {
+        this.emptyWeightBulto = selectedBulto.weight;
+        this.maxCapacityBulto = selectedBulto.maxLoad;
+
         this.largeBulto = selectedBulto.dimensions.large;
         this.widthBulto = selectedBulto.dimensions.width;
         this.heightBulto = selectedBulto.dimensions.height;
       }
-
-      // // DEBUG
-      // console.log('Selected Contenedor:', selectedContenedor);
-      // console.log('Selected Pallet:', selectedPallet);
-      // console.log('Selected Bulto:', selectedBulto);
-
-      // console.log("===============================");
-
-      // console.log('Large Contenedor:', selectedContenedor.dimensions.large);
-      // console.log('Width Contenedor:', selectedContenedor.dimensions.width);
-      // console.log('Height Contenedor:', selectedContenedor.dimensions.height);
-
-      // console.log("===============================");
-
-      // console.log('Large Pallet:', selectedPallet.dimensions.large);
-      // console.log('Width Pallet:', selectedPallet.dimensions.width);
-      // console.log('Height Pallet:', selectedPallet.dimensions.height);
-
-      // console.log("===============================");
-
-      // console.log('Large Bulto:', this.largeBulto);
-      // console.log('Width Bulto:', this.widthBulto);
-      // console.log('Height Bulto:', this.heightBulto);
-
-      // console.log("===============================");
-
-      // console.log('Bulto Weight:', this.bultoWeight);
-      // console.log('Cajas a Exportar:', this.cajasExportar);
 
       // -------------------------------
       // AL LLEGAR AQUÍ TODO ES VÁLIDO

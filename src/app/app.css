@@ -225,11 +225,6 @@ main {
     display: block;
 }
 
-/* Agrupamos automáticamente las tarjetas en una columna */
-.selection-details-wrapper .contenedor-details {
-    width: 300px;
-}
-
 .selection-details-wrapper > .contenedor-details {
     margin-bottom: 20px;
 }
@@ -251,6 +246,7 @@ main {
     --main-color: #323232;
     --bg-color: #fff;
 
+    width: 250px;
     padding: 20px;
     border-radius: 5px;
     border: 2px solid var(--main-color);
@@ -286,18 +282,25 @@ main {
 }
 
 .dim-input {
-    width: 80px;
-    padding: 6px 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-align: center;
-    font-size: 14px;
+    width: 90%;
+    height: 40px;
+    border-radius: 5px;
+    border: 2px solid var(--main-color);
+    background-color: var(--bg-color);
+    box-shadow: 4px 4px var(--main-color);
+    font-size: 15px;
+    color: var(--font-color);
+    padding: 0px 8px;
+    outline: none;
+}
+
+.dim-input::placeholder {
+    color: var(--font-color-sub);
+    opacity: 0.8;
 }
 
 .dim-input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.35);
-    outline: none;
+    border: 2px solid var(--input-focus);
 }
 
 .dimensions-grid label {
@@ -527,10 +530,6 @@ main {
 
 /* 1) Laptops / pantallas medianas */
 @media (max-width: 1200px) {
-    .contenedor-details {
-        width: 350px;
-    }
-
     .contenedor-select {
         width: 250px;
     }
@@ -551,14 +550,6 @@ main {
         flex-direction: column;
         align-items: stretch;
         gap: 20px;
-    }
-
-    .contenedor-details {
-        width: 85%;
-    }
-
-    .contenedor-select {
-        width: 85%;
     }
 
     .selection-controls {
@@ -602,7 +593,6 @@ main {
         font-size: initial;
     }
 
-    .contenedor-select,
     .dim-input {
         width: 100%;
     }
